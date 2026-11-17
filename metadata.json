@@ -1,0 +1,6 @@
+{
+  "name": "Lectoris",
+  "description": "Gaze-tracked editorial reading studio powered by MediaPipe Face Landmarker iris tracking, 9-point screen calibration, and real-time fixation analytics.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
