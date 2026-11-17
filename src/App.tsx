@@ -8,6 +8,7 @@ import { ReadingStage } from './components/ReadingStage';
 import { TopBar } from './components/TopBar';
 import { CURATED_PASSAGES, tokenizePassage } from './data/passages';
 import { useMediaPipeGaze } from './hooks/useMediaPipeGaze';
+import { formatDuration, useSessionRecorder } from './hooks/useSessionRecorder';
 import { fitBlendedCalibrationModel, predictScreenPoint } from './lib/gazeMath';
 import type {
   AppView,
@@ -64,6 +65,7 @@ function loadStoredCustomPassages(): ReadingPassage[] {
 
 export default function App() {
   const [activeView, setActiveView] = useState<AppView>('reader');
+  const recorder = useSessionRecorder();
   const [source, setSource] = useState<TrackingSource>('camera');
   const [settings, setSettings] = useState<ReaderSettings>(DEFAULT_SETTINGS);
   const [calibrationModel, setCalibrationModel] = useState<CalibrationModel | null>(
@@ -799,6 +801,20 @@ export default function App() {
         className="fixed w-px h-px opacity-0 pointer-events-none"
       />
 
+      {/* Recording indicator when the rail (and its controls) is not visible */}
+      {recorder.isRecording && activeView !== 'reader' && (
+        <button
+          type="button"
+          onClick={recorder.stop}
+          title="Stop recording"
+          className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-full bg-rose-600 text-white px-3.5 py-2 text-xs font-semibold shadow-lg hover:bg-rose-700 transition-colors cursor-pointer"
+        >
+          <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+          <span className="font-mono-tabular">REC {formatDuration(recorder.elapsedMs)}</span>
+          <span className="opacity-80">· Stop</span>
+        </button>
+      )}
+
       {/* 60fps Viewport Gaze Reticle */}
       <GazeReticle
         reticleRef={reticleRef}
@@ -838,6 +854,7 @@ export default function App() {
             settings={settings}
             onUpdateSettings={handleUpdateSettings}
             telemetry={telemetry}
+            recorder={recorder}
           />
           <ReadingStage
             passage={activePassage}

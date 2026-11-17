@@ -16,6 +16,8 @@ import type {
   TrackerStatus,
   TrackingSource,
 } from '../types/gaze';
+import type { SessionRecorder } from '../hooks/useSessionRecorder';
+import { RecordingPanel } from './RecordingPanel';
 
 interface InstrumentationRailProps {
   previewCanvasRef: React.RefObject<HTMLCanvasElement | null>;
@@ -42,6 +44,7 @@ interface InstrumentationRailProps {
     avgDwellMs: number;
     regressionCount: number;
   };
+  recorder: SessionRecorder;
 }
 
 function getStatusDisplay(status: TrackerStatus): {
@@ -85,6 +88,7 @@ export const InstrumentationRail: React.FC<InstrumentationRailProps> = ({
   settings,
   onUpdateSettings,
   telemetry,
+  recorder,
 }) => {
   const isDark = settings.surface === 'obsidian';
   const isSepia = settings.surface === 'sepia';
@@ -293,6 +297,9 @@ export const InstrumentationRail: React.FC<InstrumentationRailProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Session Recording: screen / webcam / both */}
+      <RecordingPanel recorder={recorder} surface={settings.surface} />
 
       {/* Section 2: Gaze Reticle & Reading Aids */}
       <div className={`p-4 border-b ${divider}`}>
